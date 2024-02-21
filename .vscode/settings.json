@@ -1,5 +1,6 @@
 {
     "editor.mouseWheelZoom": true,
     "workbench.commandPalette.preserveInput": true,
-    "problems.showCurrentInStatus": true
+    "problems.showCurrentInStatus": true,
+    "editor.suggest.showStatusBar": true
 }
