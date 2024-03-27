@@ -9,7 +9,7 @@ app = FastAPI()
 
 class User(BaseModel):
     id: int
-    #name: str
+    name: str
     surname: str
     url: str
     age: int
@@ -24,16 +24,31 @@ async def usersjson():
             {"name": "Moure", "surname": "Dev", "url": "https://mouredev.com" ,"age": 35},
             {"name": "Haakon", "surname": "Dahlberg", "url": "https://Haakon.com", "age": 33}]
 
+
+
 @app.get("/users")
 async def users():
     return users_list
 
+# path
+
 @app.get("/user/{id}")
 async def user(id: int):
-    users = filter(lambda user: user.id == id, users_list)
+    user = filter(lambda user: user.id == id, users_list)
+    #users = filter(lambda user: user.id == id, users_list)
     try:
         return list(users)[0]
     except:
         return {"error": "no se ha encontrado el usuario"}
 
-#@app.post()
+
+# query
+
+@app.get("/userquery/")
+async def user(id: int):
+    #user = filter(lambda user: user.id == id, users_list)
+    users = filter(lambda user: user.id == id, users_list)
+    try:
+        return list(users)[0]
+    except:
+        return {"error": "no se ha encontrado el usuario"}
