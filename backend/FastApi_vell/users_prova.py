@@ -1,55 +1,64 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-router = APIRouter()
-                                                    #esta software accede a un server virtual en localhost(uvicorn)
-#inicia el server : uvicorn users:app --reload      #tenemos que ejecutar esta linea desde el terminal para acceder a \users
-#inicia el server : uvicorn main:app --reload       # o esta otra si queremos acceder a \main
+
+
+app = FastAPI()
+
+#inicia el server : uvicorn users_prova:app --reload
+#inicia el server : uvicorn main:app --reload
+#inicia el server : uvicorn usuario:app --reload
 
 # Entidad user
 
-class User(BaseModel):          #usamos basemodel para validar los atributos de la clase
+class User(BaseModel):
     id: int
     name: str
     surname: str
     url: str
     age: int
 
-users_list = [User(id=1, name="Brais", surname="moure", url="https://moure.dev", age=35),       #creamos una lista de usuarios de la clase User
+users_list = [User(id=1, name="Brais", surname="moure", url="https://moure.dev", age=35), 
             User(id=2, name="Moure", surname="Dev", url="https://mouredev.com", age=35),
             User(id=3, name="Haakon", surname="Dahlberg", url="https://Haakon.com", age=33)]
 
-@router.get("/usersjson")      #accedemos al directorio \usersjson de localhost 127.0.0.1:8000/usersjson
-async def usersjson():      #accedemos mediante una funcion asyncrona
-    return [{"name": "Brais", "surname": "moure", "url": "https://moure.dev", "age": 35},       #nos devuelve la lista de usuarios
+@app.get("/usersjson")
+async def usersjson():
+    return [{"name": "Brais", "surname": "moure", "url": "https://moure.dev", "age": 35},
             {"name": "Moure", "surname": "Dev", "url": "https://mouredev.com" ,"age": 35},
             {"name": "Haakon", "surname": "Dahlberg", "url": "https://Haakon.com", "age": 33}]
 
 
 
-@router.get("/users")
-async def users():
+@app.get("/users_prova/")
+async def users_prova():
     return users_list
 
 
-@router.get("/user/{id}")          #path, accedemos a user a traves del id en la linea de path (get)
+@app.get("/user/{id}")          #path
 async def user(id: int):
     return search_user(id)
     
     
-@router.get("/user/")             #query
+@app.get("/user/1")             #query
 async def user(id: int):
     return search_user(id)
             
-@router.post("/user/", status_code=201)        #codigo de error por defecto. Creamos un nuevo usuario(post)
+
+@app.post("/user/1")                                       
+async def usuario(user:User):
+    return "Hola guapo"
+
+
+@app.post("/user/", status_code=201)
 async def user(user:User):
     if type(search_user(user.id)) == User:
-        raise HTTPException(status_code=404, detail="el usuario ya existe")         #lanza la excepcion 
+        return HTTPException(status_code=204, detail="el usuario ya existe")    
         #return {"error": "el usuario ya existe"}
     else:
         users_list.append(user) 
     return user
-        
-@router.put("/user/")
+       
+@app.put("/user/")
 async def user(user:User):  
     
     found = False   
@@ -71,7 +80,7 @@ def search_user(id: int):
         return {"error": "no se ha encontrado el usuario"}
     
 
-@router.delete("/user/{id}")          #path
+@app.delete("/user/{id}")          #path
 async def user(id: int):
     
     found = False
